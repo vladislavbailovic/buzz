@@ -10,10 +10,11 @@ type Range struct {
 	limit    int
 	position int
 }
+
 func (r Range) withinRange() bool {
 	return r.position < r.limit
 }
-func (r *Range)advance() {
+func (r *Range) advance() {
 	r.position += 1
 }
 
@@ -21,17 +22,19 @@ type Bounds struct {
 	min int
 	max int
 }
-func (b Bounds)getDiff() int {
+
+func (b Bounds) getDiff() int {
 	return b.max - b.min
 }
 
 type History struct {
 	prev string
 }
-func (h *History)update(val string) {
+
+func (h *History) update(val string) {
 	h.prev = val
 }
-func (h History)isKnown(val string) bool {
+func (h History) isKnown(val string) bool {
 	return h.prev == val
 }
 
@@ -41,8 +44,8 @@ type Generator interface {
 }
 
 type RandomInt struct {
-	rng    *Range
-	bounds Bounds
+	rng     *Range
+	bounds  Bounds
 	history *History
 }
 

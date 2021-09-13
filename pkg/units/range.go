@@ -44,5 +44,4 @@ func NewBounds(boundaries []int) Bounds {
 		b.min = boundaries[1]
 	}
 	return b
-
 }
