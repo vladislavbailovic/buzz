@@ -1,9 +1,10 @@
 package request
 
 import (
-	"buzz/pkg/source"
+	"encoding/json"
 	"fmt"
 	"strings"
+	"buzz/pkg/source"
 )
 
 func Replace(haystack string, sources []source.Generator) string {
@@ -15,4 +16,9 @@ func Replace(haystack string, sources []source.Generator) string {
 		}
 	}
 	return haystack
+}
+
+func ReplaceJson(haystack map[string]interface{}, sources []source.Generator) string {
+	jsonString, _ := json.Marshal(haystack)
+	return Replace(string(jsonString), sources)
 }
