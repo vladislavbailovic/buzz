@@ -14,3 +14,21 @@ func (h History) IsKnown(val string) bool {
 func NewHistory() History {
 	return History{""}
 }
+
+type LongHistory struct {
+	prev map[string]bool
+}
+
+func (h *LongHistory) Update(val string) {
+	h.prev[val] = true
+}
+func (h LongHistory) IsKnown(val string) bool {
+	test, exists := h.prev[val]
+	if !exists {
+		return false
+	}
+	return test
+}
+func NewLongHistory() LongHistory {
+	return LongHistory{map[string]bool{}}
+}
