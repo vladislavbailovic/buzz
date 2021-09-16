@@ -6,7 +6,7 @@ import (
 
 func TestRunRequestUpdatesStoreHistory(t *testing.T) {
 	req := NewRequest("http://test.com")
-	rnr := NewRunner([]Request{req})
+	rnr := NewRunner([]Request{req}, NewClient())
 
 	if rnr.store.isProcessed(req) {
 		t.Fatalf("should not be processed")
@@ -32,12 +32,12 @@ func TestRunBatchWithKnownRequests(t *testing.T) {
 	req := NewRequest("http://test.com")
 	batch := []Request{req, req, req}
 
-	rnr := NewRunner(batch)
-	rnr.store.update(req) // so we don't actuall make requests
+	rnr := NewRunner(batch, NewClient())
+	rnr.store.update(req)
 
 	for idx, resp := range rnr.runBatch(batch) {
 		if resp.StatusCode != STATUS_ALREADY_REQUESTED {
-			t.Fatalf("expected %d to already be requested", idx)
+			t.Fatalf("expected %d to already be requested, got %d", idx, resp.StatusCode)
 		}
 	}
 }
@@ -54,8 +54,7 @@ func TestRunWithKnownRequestsBatchSizes(t *testing.T) {
 		for j := 0; j < i; j++ {
 			batch = append(batch, req)
 		}
-		rnr := NewRunner(batch)
-		rnr.store.update(req) // so we don't actuall make requests
+		rnr := NewRunner(batch, NewClient())
 		rnr.batchSize = max
 
 		result := rnr.Run()

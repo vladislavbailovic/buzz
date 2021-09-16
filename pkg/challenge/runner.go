@@ -14,11 +14,12 @@ type Runner struct {
 	store        *RequestStorage
 	batchSize    int
 	currentBatch int
+	client       Client
 }
 
-func NewRunner(reqs []Request) Runner {
+func NewRunner(reqs []Request, client Client) Runner {
 	store := newRequestStorage(reqs)
-	return Runner{store: &store, batchSize: 5}
+	return Runner{store: &store, batchSize: 5, client: client}
 }
 
 func (rnr *Runner) Run() []Response {
@@ -56,8 +57,8 @@ func (rnr *Runner) runBatch(reqs []Request) []Response {
 			defer wg.Done()
 			defer mux.Unlock()
 
-			response := rnr.runRequest(req)
 			mux.Lock()
+			response := rnr.runRequest(req)
 			result = append(result, response)
 		}(req)
 	}
@@ -72,7 +73,5 @@ func (rnr *Runner) runRequest(req Request) Response {
 	}
 
 	rnr.store.update(req)
-	// @TODO: do actual request
-
-	return Response{StatusCode: STATUS_PASSTHROUGH}
+	return rnr.client.Send(req)
 }
