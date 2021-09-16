@@ -8,7 +8,7 @@ import (
 
 func TestFuzzer(t *testing.T) {
 	gx := source.NewRandomInt(10)
-	b := NewData("SOURCE_1.com")
+	b := NewRequest("SOURCE_1.com")
 	f := Fuzzer{original: b}
 
 	actual := f.Fuzz([]source.Generator{gx})

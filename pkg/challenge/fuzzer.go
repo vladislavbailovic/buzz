@@ -9,12 +9,12 @@ import (
 )
 
 type Fuzzer struct {
-	original Data
+	original Request
 }
 
-func (fuzz Fuzzer) Fuzz(sources []source.Generator) []Data {
-	var result []Data
-	var tmp Data
+func (fuzz Fuzzer) Fuzz(sources []source.Generator) []Request {
+	var result []Request
+	var tmp Request
 	haystack, _ := json.Marshal(fuzz.original)
 	for idx, source := range sources {
 		for source.HasNext() {
