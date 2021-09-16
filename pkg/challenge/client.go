@@ -8,8 +8,8 @@ import (
 type ClientType string
 
 const (
-	CLIENT_NULL ClientType = "null"
-	CLIENT_WEB  ClientType = "web"
+	CLIENT_PASSTHROUGH ClientType = "null"
+	CLIENT_WEB         ClientType = "web"
 )
 
 type Client interface {
@@ -26,12 +26,12 @@ func NewClient(ctype ...ClientType) Client {
 		client := &http.Client{Timeout: time.Second * 10}
 		return WebClient{http: client}
 	}
-	return NullClient{}
+	return PassthroughClient{}
 }
 
-type NullClient struct{}
+type PassthroughClient struct{}
 
-func (nc NullClient) Send(req Request) Response {
+func (nc PassthroughClient) Send(req Request) Response {
 	return Response{StatusCode: STATUS_PASSTHROUGH}
 }
 

@@ -2,7 +2,7 @@ package challenge
 
 import "testing"
 
-func TestNewClientReturnsNullClientByDefault(t *testing.T) {
+func TestNewClientReturnsPassthroughClientByDefault(t *testing.T) {
 	var nc Client
 	nc = NewClient()
 
@@ -11,24 +11,24 @@ func TestNewClientReturnsNullClientByDefault(t *testing.T) {
 		t.Fatalf("should not be web client by default")
 	}
 
-	_, ok2 := nc.(NullClient)
+	_, ok2 := nc.(PassthroughClient)
 	if !ok2 {
-		t.Fatalf("should be null client by default")
+		t.Fatalf("should be passthrough client by default")
 	}
 }
 
-func TestNewClientReturnsNullClientWhenRequested(t *testing.T) {
+func TestNewClientReturnsPassthroughClientWhenRequested(t *testing.T) {
 	var nc Client
-	nc = NewClient(CLIENT_NULL)
+	nc = NewClient(CLIENT_PASSTHROUGH)
 
 	_, ok1 := nc.(WebClient)
 	if ok1 {
-		t.Fatalf("should not be web client when null requested")
+		t.Fatalf("should not be web client when passthrough requested")
 	}
 
-	_, ok2 := nc.(NullClient)
+	_, ok2 := nc.(PassthroughClient)
 	if !ok2 {
-		t.Fatalf("should be null client when requested")
+		t.Fatalf("should be passthrough client when requested")
 	}
 }
 
@@ -36,9 +36,9 @@ func TestNewClientReturnsWebClientWhenRequested(t *testing.T) {
 	var nc Client
 	nc = NewClient(CLIENT_WEB)
 
-	_, ok1 := nc.(NullClient)
+	_, ok1 := nc.(PassthroughClient)
 	if ok1 {
-		t.Fatalf("should not be null client when web requested")
+		t.Fatalf("should not be passthrough client when web requested")
 	}
 
 	_, ok2 := nc.(WebClient)
