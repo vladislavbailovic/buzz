@@ -8,7 +8,7 @@ import (
 
 func TestFuzzer(t *testing.T) {
 	gx := source.NewRandomInt(10)
-	b := NewBuilder("SOURCE_1.com")
+	b := NewData("SOURCE_1.com")
 	f := Fuzzer{original: b}
 
 	actual := f.Fuzz([]source.Generator{gx})
@@ -16,7 +16,7 @@ func TestFuzzer(t *testing.T) {
 		t.Fatalf("expected set amount of fuzzed requests")
 	}
 	for _, req := range actual {
-		if req.URL.String() == "SOURCE_1.com" {
+		if req.Url == "SOURCE_1.com" {
 			t.Fatalf("expected fuzzed url")
 		}
 	}

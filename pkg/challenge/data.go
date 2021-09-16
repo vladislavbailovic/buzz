@@ -4,13 +4,13 @@ import (
 	"net/http"
 )
 
-type Builder struct {
+type Data struct {
 	Method  string
 	Url     string
 	Headers map[string]string
 }
 
-func (b Builder) Build() http.Request {
+func (b Data) Build() http.Request {
 	r, _ := http.NewRequest(b.Method, b.Url, nil)
 	for key, val := range b.Headers {
 		r.Header.Set(key, val)
@@ -18,8 +18,8 @@ func (b Builder) Build() http.Request {
 	return *r
 }
 
-func NewBuilder(url string) Builder {
-	return Builder{
+func NewData(url string) Data {
+	return Data{
 		Method:  "GET",
 		Url:     url,
 		Headers: map[string]string{"user-agent": "test"},

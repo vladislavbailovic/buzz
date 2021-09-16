@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-func TestNewBuilderSetsDefaults(t *testing.T) {
-	b := NewBuilder("test.com")
+func TestNewDataSetsDefaults(t *testing.T) {
+	b := NewData("test.com")
 	if b.Method != "GET" {
 		t.Fatalf("should be get by default")
 	}

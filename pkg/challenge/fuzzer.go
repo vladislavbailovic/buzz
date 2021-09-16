@@ -3,19 +3,18 @@ package challenge
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"buzz/pkg/source"
 )
 
 type Fuzzer struct {
-	original Builder
+	original Data
 }
 
-func (fuzz Fuzzer) Fuzz(sources []source.Generator) []http.Request {
-	var result []http.Request
-	var tmp Builder
+func (fuzz Fuzzer) Fuzz(sources []source.Generator) []Data {
+	var result []Data
+	var tmp Data
 	haystack, _ := json.Marshal(fuzz.original)
 	for idx, source := range sources {
 		for source.HasNext() {
@@ -23,7 +22,7 @@ func (fuzz Fuzzer) Fuzz(sources []source.Generator) []http.Request {
 			needle := fmt.Sprintf("SOURCE_%d", idx+1)
 			replaced := strings.Replace(string(haystack), needle, rpl, -1)
 			json.Unmarshal([]byte(replaced), &tmp)
-			result = append(result, tmp.Build())
+			result = append(result, tmp)
 		}
 	}
 	return result
