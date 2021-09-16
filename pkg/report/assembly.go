@@ -11,10 +11,6 @@ type Item struct {
 	source challenge.Response
 }
 
-type Filter interface {
-	Apply(Item) bool
-}
-
 func (a *Assembly) AddResponse(resp challenge.Response) {
 	item := Item{resp}
 	a.Add(item)
