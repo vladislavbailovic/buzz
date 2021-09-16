@@ -1,7 +1,6 @@
 package challenge
 
 import (
-	"net/http"
 	"sync"
 )
 
@@ -17,14 +16,14 @@ type Runner struct {
 	currentBatch int
 }
 
-func NewRunner(reqs []*http.Request) Runner {
+func NewRunner(reqs []Request) Runner {
 	store := newRequestStorage(reqs)
 	return Runner{store: &store, batchSize: 5}
 }
 
-func (rnr *Runner) Run() []http.Response {
-	var batch []*http.Request
-	var results []http.Response
+func (rnr *Runner) Run() []Response {
+	var batch []Request
+	var results []Response
 
 	for _, req := range rnr.store.queue {
 		batch = append(batch, req)
@@ -32,7 +31,7 @@ func (rnr *Runner) Run() []http.Response {
 			for _, resp := range rnr.runBatch(batch) {
 				results = append(results, resp)
 			}
-			batch = []*http.Request{}
+			batch = []Request{}
 		}
 	}
 
@@ -45,15 +44,15 @@ func (rnr *Runner) Run() []http.Response {
 	return results
 }
 
-func (rnr *Runner) runBatch(reqs []*http.Request) []http.Response {
-	var result []http.Response
+func (rnr *Runner) runBatch(reqs []Request) []Response {
+	var result []Response
 	var wg sync.WaitGroup
 	var mux sync.Mutex
 
 	rnr.currentBatch += 1
 	for _, req := range reqs {
 		wg.Add(1)
-		go func(req *http.Request) {
+		go func(req Request) {
 			defer wg.Done()
 			defer mux.Unlock()
 
@@ -67,13 +66,13 @@ func (rnr *Runner) runBatch(reqs []*http.Request) []http.Response {
 	return result
 }
 
-func (rnr *Runner) runRequest(req *http.Request) http.Response {
+func (rnr *Runner) runRequest(req Request) Response {
 	if rnr.store.isProcessed(req) {
-		return http.Response{StatusCode: STATUS_ALREADY_REQUESTED}
+		return Response{StatusCode: STATUS_ALREADY_REQUESTED}
 	}
 
 	rnr.store.update(req)
 	// @TODO: do actual request
 
-	return http.Response{StatusCode: STATUS_PASSTHROUGH}
+	return Response{StatusCode: STATUS_PASSTHROUGH}
 }

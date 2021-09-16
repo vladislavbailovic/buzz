@@ -1,13 +1,12 @@
 package challenge
 
 import (
-	"net/http"
 	"testing"
 )
 
 func TestRunRequestUpdatesStoreHistory(t *testing.T) {
-	req, _ := http.NewRequest("GET", "http://test.com", nil)
-	rnr := NewRunner([]*http.Request{req})
+	req := NewRequest("http://test.com")
+	rnr := NewRunner([]Request{req})
 
 	if rnr.store.isProcessed(req) {
 		t.Fatalf("should not be processed")
@@ -30,8 +29,8 @@ func TestRunRequestUpdatesStoreHistory(t *testing.T) {
 }
 
 func TestRunBatchWithKnownRequests(t *testing.T) {
-	req, _ := http.NewRequest("GET", "http://test.com", nil)
-	batch := []*http.Request{req, req, req}
+	req := NewRequest("http://test.com")
+	batch := []Request{req, req, req}
 
 	rnr := NewRunner(batch)
 	rnr.store.update(req) // so we don't actuall make requests
@@ -44,14 +43,14 @@ func TestRunBatchWithKnownRequests(t *testing.T) {
 }
 
 func TestRunWithKnownRequestsBatchSizes(t *testing.T) {
-	req, _ := http.NewRequest("GET", "http://test.com", nil)
+	req := NewRequest("http://test.com")
 
 	for i := 1; i < 161; i += 5 {
 		max := i % 16
 		if max == 0 {
 			continue
 		}
-		batch := []*http.Request{}
+		batch := []Request{}
 		for j := 0; j < i; j++ {
 			batch = append(batch, req)
 		}

@@ -1,14 +1,13 @@
 package challenge
 
 import (
-	"net/http"
 	"testing"
 )
 
 func TestRequestKeyGeneration(t *testing.T) {
 	rs := RequestStorage{}
-	req1, _ := http.NewRequest("GET", "http://test.com", nil)
-	req2, _ := http.NewRequest("POST", "http://test.com", nil)
+	req1 := NewRequest("http://test.com")
+	req2 := NewPostRequest("http://test.com")
 
 	key1 := rs.getKey(req1)
 	if key1 == "" {
@@ -26,8 +25,8 @@ func TestRequestKeyGeneration(t *testing.T) {
 }
 
 func TestRequestStorageHistoryUpdates(t *testing.T) {
-	rs := newRequestStorage([]*http.Request{})
-	req, _ := http.NewRequest("GET", "http://test.com", nil)
+	rs := newRequestStorage([]Request{})
+	req := NewRequest("http://test.com")
 
 	if rs.isProcessed(req) {
 		t.Fatalf("should not be processed initially")

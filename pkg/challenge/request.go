@@ -25,3 +25,11 @@ func NewRequest(url string) Request {
 		Headers: map[string]string{"user-agent": "test"},
 	}
 }
+
+func NewPostRequest(url string) Request {
+	return Request{
+		Method:  "POST",
+		Url:     url,
+		Headers: map[string]string{"user-agent": "test"},
+	}
+}
