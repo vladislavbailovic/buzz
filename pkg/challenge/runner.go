@@ -4,12 +4,6 @@ import (
 	"sync"
 )
 
-const (
-	STATUS_ALREADY_REQUESTED = iota
-	STATUS_PASSTHROUGH
-	STATUS_FAILED
-)
-
 type Runner struct {
 	store        *RequestStorage
 	batchSize    int

@@ -15,3 +15,11 @@ func TestResponseBuildReturnsHttpResponse(t *testing.T) {
 	}
 
 }
+
+func TestResponseConversionFactory(t *testing.T) {
+	resp := http.Response{StatusCode: 200}
+	r := NewResponseFromHttp(&resp)
+	if resp.StatusCode != r.StatusCode {
+		t.Fatalf("factory status code mismatch")
+	}
+}
