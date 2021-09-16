@@ -13,9 +13,7 @@ func TestRunRequestUpdatesStoreHistory(t *testing.T) {
 		t.Fatalf("should not be processed")
 	}
 
-	status1 := make(chan http.Response)
-	go rnr.runRequest(req, status1)
-	response1 := <-status1
+	response1 := rnr.runRequest(req)
 
 	if response1.StatusCode == STATUS_ALREADY_REQUESTED {
 		t.Fatalf("expected status code to NOT be %d, got %d", STATUS_ALREADY_REQUESTED, response1.StatusCode)
@@ -24,9 +22,7 @@ func TestRunRequestUpdatesStoreHistory(t *testing.T) {
 	if !rnr.store.isProcessed(req) {
 		t.Fatalf("should now be processed")
 	}
-	status2 := make(chan http.Response)
-	go rnr.runRequest(req, status2)
-	response2 := <-status2
+	response2 := rnr.runRequest(req)
 
 	if response2.StatusCode != STATUS_ALREADY_REQUESTED {
 		t.Fatalf("expected status code to be %d, got %d", STATUS_ALREADY_REQUESTED, response2.StatusCode)

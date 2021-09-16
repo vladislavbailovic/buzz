@@ -2,6 +2,7 @@ package request
 
 import (
 	"net/http"
+	"sync"
 )
 
 const (
@@ -46,31 +47,33 @@ func (rnr *Runner) Run() []http.Response {
 
 func (rnr *Runner) runBatch(reqs []*http.Request) []http.Response {
 	var result []http.Response
-	listener := make(chan http.Response)
+	var wg sync.WaitGroup
+	var mux sync.Mutex
 
 	rnr.currentBatch += 1
 	for _, req := range reqs {
-		go rnr.runRequest(req, listener)
+		wg.Add(1)
+		go func(req *http.Request) {
+			defer wg.Done()
+			defer mux.Unlock()
+
+			response := rnr.runRequest(req)
+			mux.Lock()
+			result = append(result, response)
+		}(req)
 	}
 
-	for r := range listener {
-		result = append(result, r)
-		if len(result) == len(reqs) {
-			close(listener)
-		}
-	}
-
+	wg.Wait()
 	return result
 }
 
-func (rnr *Runner) runRequest(req *http.Request, listener chan http.Response) {
+func (rnr *Runner) runRequest(req *http.Request) http.Response {
 	if rnr.store.isProcessed(req) {
-		listener <- http.Response{StatusCode: STATUS_ALREADY_REQUESTED}
-		return
+		return http.Response{StatusCode: STATUS_ALREADY_REQUESTED}
 	}
 
 	rnr.store.update(req)
 	// @TODO: do actual request
 
-	listener <- http.Response{StatusCode: STATUS_PASSTHROUGH}
+	return http.Response{StatusCode: STATUS_PASSTHROUGH}
 }
