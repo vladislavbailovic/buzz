@@ -1,7 +1,17 @@
 package challenge
 
-import "testing"
+import (
+	"net/http"
+	"testing"
+)
 
-func TestInit(t *testing.T) {
+func TestResponseBuildReturnsHttpResponse(t *testing.T) {
+	var resp http.Response
+	r := Response{StatusCode: 200}
+
+	resp = r.Build()
+	if resp.StatusCode != r.StatusCode {
+		t.Fatalf("status code mismatch")
+	}
 
 }
