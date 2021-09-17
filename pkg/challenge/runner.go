@@ -77,13 +77,13 @@ func (rnr *Runner) runRequest(req Request) Response {
 
 	if rnr.store.isProcessed(req) {
 		response = Response{StatusCode: STATUS_ALREADY_REQUESTED}
-		rnr.Publish(EVT_REQUEST, response)
+		rnr.Publish(EVT_REQUEST, req, response)
 		return response
 	}
 
 	rnr.store.update(req)
 	response = rnr.client.Send(req)
-	rnr.Publish(EVT_REQUEST, response)
+	rnr.Publish(EVT_REQUEST, req, response)
 
 	return response
 }

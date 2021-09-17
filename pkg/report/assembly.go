@@ -8,13 +8,21 @@ type Assembly struct {
 }
 
 type Item struct {
-	source challenge.Response
+	source challenge.Request
+	result challenge.Response
 }
 
-func (a *Assembly) AddResponse(resp challenge.Response) {
-	item := Item{resp}
-	a.Add(item)
+func NewItem(req challenge.Request, resp challenge.Response) Item {
+	return Item{req, resp}
 }
+
+func (i Item) GetResult() challenge.Response {
+	return i.result
+}
+func (i Item) GetSource() challenge.Request {
+	return i.source
+}
+
 func (a *Assembly) Add(item Item) {
 	a.items = append(a.items, item)
 }

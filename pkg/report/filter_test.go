@@ -7,14 +7,15 @@ import (
 
 func TestStatusFilter(t *testing.T) {
 	report := Assembly{}
+	req := challenge.NewRequest("test.com")
 
 	accept := challenge.Response{StatusCode: challenge.STATUS_PASSTHROUGH}
-	report.AddResponse(accept)
-	report.AddResponse(accept)
-	report.AddResponse(accept)
+	report.Add(NewItem(req, accept))
+	report.Add(NewItem(req, accept))
+	report.Add(NewItem(req, accept))
 
 	reject := challenge.Response{StatusCode: 200}
-	report.AddResponse(reject)
+	report.Add(NewItem(req, reject))
 
 	filter := StatusFilter{200}
 	report.AddFilter(filter)
@@ -30,14 +31,15 @@ func TestStatusFilter(t *testing.T) {
 
 func TestStatusOnlyFilter(t *testing.T) {
 	report := Assembly{}
+	req := challenge.NewRequest("test.com")
 
 	accept := challenge.Response{StatusCode: challenge.STATUS_PASSTHROUGH}
-	report.AddResponse(accept)
-	report.AddResponse(accept)
-	report.AddResponse(accept)
+	report.Add(NewItem(req, accept))
+	report.Add(NewItem(req, accept))
+	report.Add(NewItem(req, accept))
 
 	reject := challenge.Response{StatusCode: 200}
-	report.AddResponse(reject)
+	report.Add(NewItem(req, reject))
 
 	filter := StatusOnlyFilter{200}
 	report.AddFilter(filter)

@@ -15,8 +15,9 @@ type Reporter struct {
 }
 
 func (r Reporter) Listen(what ...interface{}) {
-	resp := what[0].(challenge.Response)
-	r.report.AddResponse(resp)
+	req := what[0].(challenge.Request)
+	resp := what[1].(challenge.Response)
+	r.report.Add(NewItem(req, resp))
 	r.Publish(EVT_ITEM_ADDED, r.report)
 }
 

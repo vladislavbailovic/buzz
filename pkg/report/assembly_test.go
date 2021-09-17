@@ -18,6 +18,7 @@ func (faf FakeAcceptFilter) Apply(item Item) bool {
 }
 
 func TestAddResponseAddsItem(t *testing.T) {
+	req := challenge.NewRequest("test.com")
 	resp := challenge.Response{StatusCode: challenge.STATUS_PASSTHROUGH}
 	report := Assembly{}
 
@@ -25,7 +26,7 @@ func TestAddResponseAddsItem(t *testing.T) {
 		t.Fatalf("raw size should be zero initially")
 	}
 
-	report.AddResponse(resp)
+	report.Add(NewItem(req, resp))
 	if report.RawSize() != 1 {
 		t.Fatalf("raw size should be one after adding an item")
 	}
@@ -33,7 +34,8 @@ func TestAddResponseAddsItem(t *testing.T) {
 
 func TestAddAddsItem(t *testing.T) {
 	resp := challenge.Response{StatusCode: challenge.STATUS_PASSTHROUGH}
-	item := Item{resp}
+	req := challenge.NewRequest("test.com")
+	item := NewItem(req, resp)
 	report := Assembly{}
 
 	if report.RawSize() != 0 {
@@ -48,10 +50,11 @@ func TestAddAddsItem(t *testing.T) {
 
 func TestGetItemsAppliesFilters(t *testing.T) {
 	resp := challenge.Response{StatusCode: challenge.STATUS_PASSTHROUGH}
+	req := challenge.NewRequest("test.com")
 	report := Assembly{}
 
 	for i := 0; i < 10; i++ {
-		report.AddResponse(resp)
+		report.Add(NewItem(req, resp))
 	}
 
 	if report.RawSize() != 10 {

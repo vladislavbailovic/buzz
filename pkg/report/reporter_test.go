@@ -15,7 +15,7 @@ func TestInit(t *testing.T) {
 		t.Fatalf("report should have no items initially")
 	}
 
-	cast.Publish("test", challenge.Response{StatusCode: 200})
+	cast.Publish("test", challenge.NewRequest("test.com"), challenge.Response{StatusCode: 200})
 	if 0 == r.report.RawSize() {
 		t.Fatalf("report should have an item after event")
 	}
