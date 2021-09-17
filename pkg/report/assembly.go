@@ -1,26 +1,8 @@
 package report
 
-import "buzz/pkg/challenge"
-
 type Assembly struct {
 	items   []Item
 	filters []Filter
-}
-
-type Item struct {
-	source challenge.Request
-	result challenge.Response
-}
-
-func NewItem(req challenge.Request, resp challenge.Response) Item {
-	return Item{req, resp}
-}
-
-func (i Item) GetResult() challenge.Response {
-	return i.result
-}
-func (i Item) GetSource() challenge.Request {
-	return i.source
 }
 
 func (a *Assembly) Add(item Item) {
