@@ -1,10 +1,18 @@
 package challenge
 
 import (
+	"buzz/pkg/units"
 	"sync"
 )
 
+const (
+	EVT_RUN_STARTED units.EventType = "run:start"
+	EVT_REQUEST     units.EventType = "run:request"
+	EVT_RUN_ENDED   units.EventType = "run:end"
+)
+
 type Runner struct {
+	units.Broadcaster
 	store        *RequestStorage
 	batchSize    int
 	currentBatch int
@@ -19,6 +27,9 @@ func NewRunner(reqs []Request, client Client) Runner {
 func (rnr *Runner) Run() []Response {
 	var batch []Request
 	var results []Response
+
+	rnr.Publish(EVT_RUN_STARTED)
+	defer rnr.Publish(EVT_RUN_ENDED)
 
 	for _, req := range rnr.store.queue {
 		batch = append(batch, req)
@@ -62,10 +73,17 @@ func (rnr *Runner) runBatch(reqs []Request) []Response {
 }
 
 func (rnr *Runner) runRequest(req Request) Response {
+	var response Response
+
 	if rnr.store.isProcessed(req) {
-		return Response{StatusCode: STATUS_ALREADY_REQUESTED}
+		response = Response{StatusCode: STATUS_ALREADY_REQUESTED}
+		rnr.Publish(EVT_REQUEST, response)
+		return response
 	}
 
 	rnr.store.update(req)
-	return rnr.client.Send(req)
+	response = rnr.client.Send(req)
+	rnr.Publish(EVT_REQUEST, response)
+
+	return response
 }

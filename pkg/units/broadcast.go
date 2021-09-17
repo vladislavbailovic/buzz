@@ -8,22 +8,24 @@ type Consumer interface {
 
 type Listener func(...interface{})
 
+type EventType string
+
 type Broadcaster struct {
 	sync.Mutex
-	consumers map[string][]Listener
+	consumers map[EventType][]Listener
 }
 
-func (cast *Broadcaster) Subscribe(event string, listener Consumer) {
+func (cast *Broadcaster) Subscribe(event EventType, listener Consumer) {
 	cast.Lock()
 	defer cast.Unlock()
 
 	if cast.consumers == nil {
-		cast.consumers = make(map[string][]Listener)
+		cast.consumers = make(map[EventType][]Listener)
 	}
 	cast.consumers[event] = append(cast.consumers[event], listener.Listen)
 }
 
-func (cast Broadcaster) Publish(event string, what ...interface{}) {
+func (cast Broadcaster) Publish(event EventType, what ...interface{}) {
 	cast.Lock()
 	defer cast.Unlock()
 
