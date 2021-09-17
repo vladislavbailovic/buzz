@@ -14,6 +14,11 @@ func TestRandomIntHasRange(t *testing.T) {
 	if gx.HasNext() {
 		t.Fatalf("should have reached limit")
 	}
+
+	gx.Reset()
+	if !gx.HasNext() {
+		t.Fatalf("resetting the generator should have moved cursor")
+	}
 }
 
 func TestRandomIntGeneratesNumbers(t *testing.T) {
@@ -69,5 +74,14 @@ func TestRandomIntGeneratesNumbersDifferentThanPreviousWithinRange(t *testing.T)
 			t.Fatalf("new value should be different than old: %s (attempt %d)", val, i)
 		}
 		old = val
+	}
+}
+
+func TestRandomIntSize(t *testing.T) {
+	limit := 161
+	gx := NewRandomInt(limit)
+
+	if gx.Size() != limit {
+		t.Fatalf("random int size querying fail")
 	}
 }

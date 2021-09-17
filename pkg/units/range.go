@@ -17,6 +17,9 @@ func (r Cursor) GetPos() int {
 func (r Cursor) GetSize() int {
 	return r.limit
 }
+func (r *Cursor) Reset() {
+	r.position = 0
+}
 func NewCursor(size int) Cursor {
 	return Cursor{size, 0}
 }

@@ -27,6 +27,7 @@ type RandomInt struct {
 func (ri RandomInt) HasNext() bool {
 	return !ri.cursor.IsEof()
 }
+
 func (ri RandomInt) GetNext() string {
 	var result int
 	var val string
@@ -43,4 +44,12 @@ func (ri RandomInt) GetNext() string {
 	ri.history.Update(val)
 	ri.cursor.Advance()
 	return val
+}
+
+func (ri RandomInt) Size() int {
+	return ri.cursor.GetSize()
+}
+
+func (ri RandomInt) Reset() {
+	ri.cursor.Reset()
 }

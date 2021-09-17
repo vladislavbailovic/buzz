@@ -30,6 +30,11 @@ func TestCursorUpdates(t *testing.T) {
 	if !cursor.IsEof() {
 		t.Fatalf("should be at eof")
 	}
+
+	cursor.Reset()
+	if cursor.IsEof() {
+		t.Fatalf("should not be at eof after reset")
+	}
 }
 
 func TestBoundsCreationAllZeros(t *testing.T) {

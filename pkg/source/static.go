@@ -17,7 +17,15 @@ func (lst StaticList) GetNext() string {
 	return val
 }
 
-func NewStaticList(subject []string) StaticList {
+func (lst StaticList) Reset() {
+	lst.cursor.Reset()
+}
+
+func (lst StaticList) Size() int {
+	return lst.cursor.GetSize()
+}
+
+func NewStaticList(subject []string) Generator {
 	cursor := units.NewCursor(len(subject))
 	return StaticList{
 		&cursor,

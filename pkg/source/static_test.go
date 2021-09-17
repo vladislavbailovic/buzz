@@ -15,4 +15,16 @@ func TestStaticList(t *testing.T) {
 		}
 		idx++
 	}
+
+	if len(test) != src.Size() {
+		t.Fatalf("error determining list size")
+	}
+
+	if src.HasNext() {
+		t.Fatalf("should be at list end")
+	}
+	src.Reset()
+	if !src.HasNext() {
+		t.Fatalf("should be reset")
+	}
 }
