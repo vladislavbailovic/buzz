@@ -3,7 +3,6 @@ package challenge
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"strings"
 
 	"buzz/pkg/source"
@@ -13,32 +12,64 @@ type Fuzzer struct {
 	original Request
 }
 
-func (fuzz Fuzzer) getShortestSourceSize(sources []source.Generator) int {
-	shortest := float64(sources[0].Size())
-	for _, source := range sources {
-		shortest = math.Min(float64(shortest), float64(source.Size()))
-	}
-	return int(shortest)
-}
-
 func (fuzz Fuzzer) Fuzz(sources []source.Generator) []Request {
 	var result []Request
 	var tmp Request
-	haystack, _ := json.Marshal(fuzz.original)
-	shortest := fuzz.getShortestSourceSize(sources)
+	original, _ := json.Marshal(fuzz.original)
 
-	for i := 0; i < shortest; i++ {
-		replaced := string(haystack)
-		for idx, source := range sources {
-			for source.HasNext() {
-				rpl := source.GetNext()
-				needle := fmt.Sprintf("SOURCE_%d", idx+1)
-				replaced = strings.Replace(replaced, needle, rpl, -1)
-			}
-			source.Reset()
+	for _, replacements := range carthesianProduct(sources) {
+		haystack := string(original)
+		for idx, rpl := range replacements {
+			needle := fmt.Sprintf("SOURCE_%d", idx+1)
+			haystack = strings.Replace(haystack, needle, rpl, -1)
 		}
-		json.Unmarshal([]byte(replaced), &tmp)
+		json.Unmarshal([]byte(haystack), &tmp)
 		result = append(result, tmp)
 	}
+
 	return result
+}
+
+func getSources(sources []source.Generator) [][]string {
+	result := make([][]string, 0)
+	for _, source := range sources {
+		lines := []string{}
+		for source.HasNext() {
+			lines = append(lines, source.GetNext())
+		}
+		source.Reset()
+		if len(lines) == 0 {
+			continue
+		}
+		result = append(result, lines)
+	}
+	return result
+}
+
+func carthesianProduct(raw []source.Generator) [][]string {
+	sources := getSources(raw)
+	if len(sources) == 0 {
+		return [][]string{}
+	}
+
+	result := [][]string{}
+	lenghts := func(i int) int { return len(sources[i]) }
+	for ix := make([]int, len(sources)); ix[0] < lenghts(0); nextIndex(ix, lenghts) {
+		var temp []string
+		for j, k := range ix {
+			temp = append(temp, sources[j][k])
+		}
+		result = append(result, temp)
+	}
+	return result
+}
+
+func nextIndex(ix []int, lens func(i int) int) {
+	for j := len(ix) - 1; j >= 0; j-- {
+		ix[j]++
+		if j == 0 || ix[j] < lens(j) {
+			return
+		}
+		ix[j] = 0
+	}
 }
